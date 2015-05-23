@@ -464,14 +464,15 @@ function randomString {
 
 
 DB_PASSWORD=`randomString 16`
+hostname=wordpress$(randomString 6)
 echo "db password $DB_PASSWORD" > /root/mysql_pass
-system_set_hostname wordpress$(randomString 6)
+system_set_hostname $hostname
 system_update
 postfix_install_loopback_only
 mysql_install "$DB_PASSWORD" && mysql_tune 40
 php_install_with_apache && php_tune
 apache_install && apache_tune 40 && apache_virtualhost_from_rdns
 goodstuff
-wordpress_install $(get_rdns_primary_ip)
+wordpress_install $hostname
 restartServices
 
